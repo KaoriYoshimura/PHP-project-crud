@@ -1,118 +1,163 @@
 <?php
-//Start session
-session_start(); 
+//To connect with functions, PDO, start session
+require_once ('./includes/initialize.php');
+
+//Redirect to login.php if user is not logged in
+is_login('views/login.php');
 ?>
 
-
-<!-- login include-->
-<?php    include './partials/products.php'; ?>
-
 <!doctype html>
-<html lang="en">   
+<html lang="en">
     <head>
-    
-<!-- head require-->
-<?php    require './partials/head.php'; ?>
+        <!-- head require-->
+        <?php    require './includes/head.php'; ?>
+        <!-- egen CSS -->
+        <link rel="stylesheet" href="./css/style.css">
 
         <title>Index | Bonsai</title>
 
     </head>
 
     <body>
-<!-- header include-->
-<?php    include './partials/header.php'; ?>   
+        <!-- header include-->
+        <?php    include './includes/header.php'; ?>
 
-        <main id="index"> 
+        <!-- To check if PDO connection is successfully done     -->
+        <?php include_once './includes/check_pdo.php'; ?>
 
+        <main id="index">
             <div class="container">
                 <div class="contents">
+                <!-- Welcome message, log out btn and show the error/successfully done message after redirecting from insert, update, delete  -->
+                    <p class="welcom">Welcome, <?= $_SESSION["username"];?>!</p>
+                    <p class="float-right"><a href="./includes/logout.php"><span class="button_color">Log out</span></a></p>
 
-<!--  Log in  form       -->
-                    <p>To shop our products, please fill in the below information.</p> 
-                
-                    <form action="./partials/login.php" method="post" id="form_login">
-                    <div class="form-group">
-                    <label for="username">Name</label>
-                    <input type="text" class="form-control" id="name" name="username" placeholder="Enter name">
-                    <small class="form-text text-muted">Please enter your first name.</small>
-                    <label for="address">Address</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter address">
-                    <small class="form-text warning">Please enter longer than 10 charactors.</small>
-                    <label for="tel">Telefon number</label>
-                    <input type="text" class="form-control"  id="tel" name="tel" placeholder="Enter telefon Number">
-                    <small class="form-text text-muted">Please enter your telefon number.</small>
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    </div>
-                <button type="submit" class="btn button_color">Submit</button>
-                </form>                
-<!--  Display error message  if log in is unsucceeded
-                        If any of input forms are missing redirect to index.php top and show the error message.
-                        Otherwise redirect to index.php top  and show the error message.
--->
-                        <?php if(isset($_GET["empty_error"])){
-                            echo '<span class=\'warning\'>'.($_GET["empty_error"]).'</span>';
-                            } elseif(isset($_GET["error"])){
-                            echo '<span class=\'warning\'>'.($_GET["error"]).'</span>';
-                        }
-                        ?>
-                </div>
-                
-<!--  Product catalog & Welcome message & loggin btn when logged in
--->
+                    <?php
+                        //Show error message if already exsisting product had added into the cart.
+                        is_error("cart_exist", "qty_empty", null, null);
+                        //Show successfull message if successfully item is sent to the database/successfully item qty updated or item deleted in the database.
+                        is_successfull("successfull_sent", "update", "delete", null);
+                    ?>
+                <!--  Product catalog  form       -->
+                <div>
+
+                    <h3>Product catalog</h3>
+
+                    <div class="row justify-content-around">
                         <?php
-                        if(isset($_SESSION["username"])):
+                            //Fetch product information from database
+                            $product_array = get_product_info($pdo);
+                            //Loop to show product details
+                            for($i=0; $i< count($product_array); $i++):
                         ?>
-                        <h3 id="product_catalog">Product catalog</h3>
-                        <p class="float-right"><a href="./partials/logout.php"><span class="button_color">Log out</span></a></p>
-                        <p class="welcom">Welcome <?= $_SESSION["username"];?>!</p>         
+                        <!--  Product cards -->
+                        <div class="col-12 col-md-3 card justify-content-start">
+                            <img class="card-img-top" src="./images/<?= $product_array[$i]['images']; ?>" alt="<?= $product_array[$i]['product_name'];?>" class="img-fluid"/>
+                            <h4><?= $product_array[$i]['product_name']; ?></h4>
+                            <p>Cost: <?= $product_array[$i]['cost']; ?>SEK</p>
 
-                
-<!--  Product catalog  form       -->
-                <div class="row justify-content-around">
+                        <!-- Input form to choose qty  -->
+                            <form action="./includes/add_to_cart.php" method="post">
+                                <label for="qty">Quantity:</label>
+                                <input type="number"  name="qty" min="0" size="1" value="0" style="width:40px"/>
+                                <input type="hidden"  name="hidden_id" value="<?= $product_array[$i]['product_id'];?>">
+                                <input type="hidden"  name="hidden_name" value="<?= $product_array[$i]['product_name']; ?>">
+                                <input type="hidden"  name="hidden_cost" value="<?= $product_array[$i]['cost'];?>">
+                                <input type="submit" value="Add to Cart" name="add"  class="button_color"/>
 
-                    <?php
-                    //Loop to show product details
-                    for ($i=0; $i< count($products); $i++) :
-                    ?>            
-                    <div class="col-12 col-md-3 card justify-content-start">
-                        <img class="card-img-top" src="images/<?= $products[$i]['images']; ?>" alt="<?= $products[$i]['name'];?>" class="img-fluid"/>
-                        <h4><?= $products[$i]['name']; ?></h4>
-                        <p>Cost: <?= $products[$i]['costs']; ?>SEK</p>
+                            </form>
+                        </div>
+                        <?php
+                            //End of forloop for product cards
+                            endfor;
+                        ?>
 
-                    <!-- Input form to choose qty and send it to checkout.php-->
-                        <form action="checkout.php" method="post" id="form_product">
-                            <label for="qty">Quantity:</label>
-                            <input type="number" form="form_product" name="qty[]" min="0" size="1" value="0" style="width:40px"/>
-                            <input type="hidden" form="form_product" name="hidden_name[]" value="<?= $products[$i]['name'];?>">
-                            <input type="hidden" form="form_product" name="hidden_cost[]" value="<?= $products[$i]['costs'];?>">
-                        </form>
                     </div>
+                </div>
+                <!-- Separator  -->
+                <hr>
+                <!-- Shopping cart details  -->
+                <div>
+                    <h3>Shopping cart</h3>
+
                     <?php
-                    //End of forloop
-                    endfor;
+                        //Fetch shopping cart details from database
+                        $cart = get_cart_info($pdo, $_SESSION['user_id']);
+                    var_dump( $cart["0"]);
+
+                        //Shows the shopping cart details if cart is NOT empty
+                        if(!empty($cart)):
+                    ?>
+                    <!-- The table shrinks with tablet size or bigger screen -->
+                    <div class="table-responsive narrow_table">
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <th class="text-center">Product Name</th>
+                                <th class="text-center">Cost</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center"></th>
+                            </tr>
+
+                            <?php
+                                //Loop cart to show shopping cart details
+                                foreach($cart as $value):
+                            ?>
+
+                            <tr>
+                                <td class="align-middle"><?= $value["product_name"]; ?></td>
+                                <td class="text-right align-middle"><?= $value["cost"]; ?></td>
+                                <td class="text-center">
+                                    <!-- Update form with the qty from the data  -->
+                                    <form action="./includes/update_item.php" method="post">
+                                        <input type="number"  name="qty" min="1" size="1" value="<?= $value["qty"]; ?>" style="width:40px"/>
+                                        <input type="hidden"  name="hidden_name" value="<?= $value["product_name"];?>">
+                                        <input type="hidden"  name="hidden_id" value="<?= $value["product_id"];?>">
+                                        <input type="submit" value="Update" name="update" class="d-inline button_color"/>
+                                    </form>
+
+                                </td>
+
+                                <td class="text-center align-middle">
+                                    <!-- Delete btn to delete item from the database-->
+                                    <a href="./includes/remove_item.php?product_id=<?= $value["product_id"]; ?>" class="button_color">Delete</a>
+                                </td>
+                            </tr>
+
+                            <?php
+                                //End of Loop cart to show shopping cart details
+                                endforeach;
+                            ?>
+
+                        </table>
+                    </div><!-- End of shopping cart table-->
+
+
+                    <!-- Btn to jump to checkout.php -->
+                    <p class="text-right"><a href="./views/checkout.php"><span class="button_color">Check out</span></a></p>
+
+                    <?php
+                        //if shopping cart is empty shows the message
+                        else:
                     ?>
 
-                </div>
-                <!-- Submit btn for chosen qty  -->
-                <div>
-                    <input type="submit" value="Add to Cart" name="add" form="form_product" class="to_checkout button_color"/>
-                </div>
-                
-<!-- close tag for "if"(when log in is succeeded)               -->
-                <?php 
-                endif;
-                ?>
-            </div>
+                    <!-- Shows only the shopping cart is empty -->
+                        <p>Your shopping cart is empty.</p>
+                        <p class="text-right"><span class="button_emp_color">Check out</span></p>
 
+                    <?PHP
+                        //End of if for "if shopping cart is empty"
+                        endif;
+                    ?>
+                </div><!-- Shopping cart div end-->
+            </div><!-- End of contents div -->
+        </div><!-- End of container div-->
         </main>
 
-<!-- footer include-->
-<?php    include './partials/footer.php'; ?>
+        <!-- footer include-->
+        <?php include './includes/footer.php'; ?>
 
-<!-- Optional JavaScript-->
-        <?php    require './partials/optional_js.php'; ?>
-        
-        </body>
+        <!-- Optional JavaScript-->
+        <?php require './includes/optional_js.php'; ?>
+    </body>
 </html>

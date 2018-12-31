@@ -1,0 +1,179 @@
+/*borders for checking*/
+div{
+    border: 1px dashed yellow;
+}
+
+nav, img, i, ul, li{
+    border: 1px dashed pink;
+}
+
+main, aside, button{
+    border: 1px dashed blue;
+}
+
+
+/*common*/
+
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+body{
+    color: black;
+    font-family: $body_family;
+}
+
+header, footer{
+    background-color: $main_color_g;
+    
+    .container{
+        margin: auto;
+        padding: 20px 20px;
+        background-color: $main_color_g;
+        color: #fff;
+    }
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+    
+        &:hover{
+            color: inherit;
+            text-decoration: none;    
+    }
+}
+
+
+ul{
+	list-style-type: none;
+}
+
+h1{
+    font-family: $rubrik_family;
+    font-size: 4em;
+}
+
+h2, h3{
+    color: $main_color_g;
+    font-weight: bold;
+}
+
+
+.container{
+    margin: auto;
+    background-color: #fff;
+    padding: 20px 20px;
+}
+
+.button_color{
+    @include buttonStyle($main_color_g,#fff) ;
+
+    &:hover{
+        @include buttonStyle(saddlebrown,#fff) ;
+    }
+
+}
+
+.button_emp_color{
+    @include buttonStyle(#6E6E6E,#fff) ;
+
+}
+
+
+.contents{
+min-width: 400px;
+margin: auto;
+min-height: 600px;
+
+}
+
+.card{
+    padding:10px;
+    margin: 10px;
+
+        img{
+            width: 100%;
+            height: 300px;
+            -o-object-fit: cover;
+            object-fit: cover;
+        }
+}
+
+.successfull{
+    color: $main_color_g;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid $main_color_g;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.warning{
+    color: red;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid red;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.to_checkout{
+    display: block;
+    width:80%;
+    margin: auto;
+    border: none;
+}
+
+.welcom{
+    font-size: 35px;
+}
+
+
+
+/*Login pages*/
+#index{
+    .narrow_table{
+        @include narrow_table;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    
+}
+
+/*Login page*/
+#login{
+    .contents{
+        max-width: 400px;
+        margin: auto;
+    }
+}
+
+/*Checkout, confirm page*/
+#checkout, #confirm{
+
+    .contents{
+        width: 100%;
+        margin: auto;
+        min-height:  500px;
+    }
+
+    .narrow_table{
+    @include narrow_table;
+    }
+}
+
+//Tablet size
+@media screen and (min-width: 750px){
+}
+
+//Desktop size
+@media screen and (min-width: 1024px){
+
+}

@@ -1,0 +1,22 @@
+@mixin buttonStyle($bg_color,$t_color) {
+    background-color: $bg_color;
+    color: $t_color;
+	line-height: 20px;
+    padding: 10px;
+    margin: 10px;
+    border: none;
+      -webkit-border-radius: 3px;
+         -moz-border-radius: 3px;
+          -ms-border-radius: 3px;
+              border-radius: 3px;
+}
+
+@mixin narrow_table{
+    .title{
+        width: 30%;
+    }
+
+    .info{
+        width: 70%;
+    }
+}

@@ -1,0 +1,22 @@
+/*variabler start*/
+$rubrik_family: 'Vidaloka', serif;
+$body_family:'Raleway', sans-serif;
+$main_color_g: green;
+
+/*box-shadow: 左右の向きpx  上下の向きpx ぼかしpx 広がりpx 色 内側指定;*/
+
+
+@import "mixins";
+@import "mobile";
+
+@media screen and (min-width: 750px){
+
+    @import "tablet";
+
+    
+}
+
+@media screen and (min-width: 1024px){
+    
+}
+
