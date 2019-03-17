@@ -1,7 +1,7 @@
 <?php
 $dsn = "mysql:host=localhost;dbname=shopping_cart;port=8889;charset=utf8";
 $username = "root";
-$password = "aterxV1730";
+$password = "root";
 
 $pdo = new PDO($dsn, $username, $password);
 
